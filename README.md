@@ -1,37 +1,45 @@
-# atc-vm
+# ATC-VM — ATCLang Virtual Machine
 
-ShivaVM — Smart Contract Virtual Machine für A-TownChain.
+Die ATCLang Virtual Machine führt ATCLang-Bytecode aus. Teil des A-TownChain OS Ökosystems.
 
-Wird aus atc-shivacore/kernel/src/vm.rs (K-Sprint 19) als eigenständiges Repo
-ausgelagert, sobald der VM-Code zu groß für das Kernel-Repo wird.
-
-## Features (bestehend aus K19)
-- 27 Opcodes (Arithmetic, Stack, Memory, Storage, Control Flow)
-- Stack-Interpreter (1024 Slots)
-- Gas-Metering (Per-Instruction Cost)
-- Contract-Storage (Key-Value)
-- Call/Return (rekursive Contracts)
-- Event-Logging
-
-## Geplante Erweiterungen
-- JIT-Compilation (Hot-Path Optimierung)
-- Bytecode-Verification
-- Formal-Verification-Interface
-- Cross-Contract-Calls (async)
-- WASM-Fallback (alternative Bytecode)
-
-## Build
-```bash
-cargo build --target x86_64-unknown-none
+## Architektur
+```
+┌─────────────────────────────────────────┐
+│              ATC-VM                      │
+├─────────────────────────────────────────┤
+│  ┌─────────┐  ┌──────────┐  ┌─────────┐ │
+│  │ Decoder  │→│ Executor │→│ Memory  │ │
+│  └─────────┘  └──────────┘  └─────────┘ │
+│  ┌─────────┐  ┌──────────┐  ┌─────────┐ │
+│  │ Stack   │  │  Heap    │  │  GC     │ │
+│  └─────────┘  └──────────┘  └─────────┘ │
+│  ┌─────────┐  ┌──────────┐               │
+│  │ Gas     │  │ Syscalls │               │
+│  └─────────┘  └──────────┘               │
+└─────────────────────────────────────────┘
 ```
 
-## Abhängigkeiten
-- [atc-shivacore](https://github.com/A-TownChain-Okosystems/atc-shivacore) — Kernel-Integration
+## Komponenten
+- **Bytecode Decoder** — ATCLang Opcodes → interne Instruktionen
+- **Executor** — Stack-basierte Ausführung mit Gas-Metering
+- **Memory Manager** — Stack, Heap, Garbage Collection
+- **Syscall Interface** — Kernel-Syscalls (ATC-22 bis ATC-30)
+- **Gas Meter** — Execution-Kosten-Limit (Anti-DoS)
 
-## Status
-- Initial: Repo erstellt 05.08.2026
-- Sprache: Rust (no_std)
-- Ursprung: K-Sprint 19 (vm.rs im Kernel)
+## Opcode-Kategorien
+| Bereich | Opcodes | Beschreibung |
+|---------|---------|--------------|
+| Stack | PUSH, POP, DUP, SWAP | Stack-Operationen |
+| Arithmetic | ADD, SUB, MUL, DIV, MOD | Mathematik |
+| Logic | AND, OR, NOT, XOR, CMP | Logik |
+| Memory | MLOAD, MSTORE, ALLOC, FREE | Speicher |
+| Control | JUMP, JMPIF, CALL, RET | Kontrollfluss |
+| Blockchain | HASH, SIGN, VERIFY, BALANCE | Kette |
+| Syscall | SYSCALL (ATC-22 bis ATC-30) | Kernel |
 
----
-Copyright © Michael Wroblewski / A-TownChain-Okosystems. All Rights Reserved.
+## Verwandte Repos
+- [atclang](https://github.com/A-TownChain-Okosystems/atclang) — Compiler
+- [atc-stdlib](https://github.com/A-TownChain-Okosystems/atc-stdlib) — Standard Library
+- [atc-shivacore](https://github.com/A-TownChain-Okosystems/atc-shivacore) — Kernel (Rust)
+
+[agent: aurora-base44-superagent-6a2756186106d6f0fbb105b5]
