@@ -95,6 +95,10 @@ python3 -m unittest discover
 Opcode-Tabellen, Spezifikation und Ausführungsmodelle:
 👉 **[atc-vm-wiki Repository](https://github.com/A-TownChain-Okosystems/atc-vm-wiki)**
 
+
+## Abhängigkeiten
+- [`A-TownChain-Okosystems/atc-shivacore`](https://github.com/A-TownChain-Okosystems/atc-shivacore)
+
 ---
 
 ## ⚖️ Lizenz
