@@ -1,70 +1,30 @@
-# 🌳 Architektur — atc-vm
+# ARCHITECTURE.md — atc-vm
 
-> **Stand:** 2026-08-06 | **Version:** v1.0.0
-> **Teil von:** [A-TownChain Ökosystem](https://github.com/A-TownChain-Okosystems)
+> Copyright © Michael Wroblewski / A-TownChain-Okosystems. All Rights Reserved.
 
-## Beschreibung
-
-ATCLang Virtual Machine. Bytecode-Interpreter, Stack, Gas, Opcodes.
-
-## Metadaten
-
-| Metrik | Wert |
-|--------|------|
-| Layer | L1 — ATCLang |
-| Sprint | 2.1 |
-| ATC-Standards | ATC-93 |
-| Status | 🟠 Aufbau |
-| Code-Repo | [atc-vm](https://github.com/A-TownChain-Okosystems/atc-vm) |
-| Wiki-Repo | [atc-vm-wiki](https://github.com/A-TownChain-Okosystems/atc-vm-wiki) |
-
-## Komponenten-Übersicht
-
-| Komponente | Beschreibung | Status |
-|-----------|-------------|--------|
-| `atcvm.py` | VM Core: fetch, decode, execute cycle, stack, memory | 📋 GEPLANT |
-| `opcodes.atc` | Opcode-Definitionen: arithmetic, logic, control, crypto, syscall | 📋 GEPLANT |
-| `stack.atc` | Stack-Management: push, pop, dup, swap, frame management | 📋 GEPLANT |
-| `gas_meter.atc` | Gas-Meter: per-instruction cost, refund, limit enforcement | 📋 GEPLANT |
-| `interpreter.atc` | Bytecode-Interpreter: dispatch loop, error handling | 📋 GEPLANT |
-| `bytecode_format.atc` | Bytecode-Format: encoding, sections, metadata, checksum | 📋 GEPLANT |
-
-## Architektur-Baum
-
-```
+## File Tree
+```tree
 atc-vm/
-├── README.md
-├── LICENSE
-├── .gitignore
-├── STATUS.md
-├── ROADMAP.md
-├── CHANGELOG.md
-├── ARCHITECTURE.md
-├── FILE_REGISTER.md
-├── atcvm.py
-├── opcodes.atc
-├── stack.atc
-├── gas_meter.atc
-├── interpreter.atc
-├── bytecode_format.atc
+├── Cargo.toml — ShivaVM core execution engine manifest (no_std)
+├── .gitignore — Git ignore rules
+└── src/
+    ├── lib.rs — ShivaVM entry point, execution environment, and state machine runner
+    ├── opcodes.rs — Instruction set architecture opcode definitions and instruction decoder
+    ├── stack.rs — High-performance operand stack and call stack implementation
+    ├── gas.rs — Deterministic opcode gas metering and resource limit enforcement
+    └── storage.rs — Persistent state trie storage interface and state rollback support
 ```
 
-## Abhängigkeiten
+## Module Descriptions
+- src/lib.rs — Main virtual machine execution engine, bytecode runner loop, and environment host bindings.
+- src/opcodes.rs — Complete specification and decoding matrix for ShivaVM instruction opcodes.
+- src/stack.rs — Efficient fixed-capacity stack operations with strict push/pop boundary checks.
+- src/gas.rs — Tracks instruction gas costs to guarantee deterministic execution and prevent infinite loops.
+- src/storage.rs — Key-value state storage interface backing virtual machine execution state.
 
-- **ATCLang Stdlib** (atc-stdlib)
-- **ATC VM** (atc-vm)
-- **ATC Kernel** (atc-kernel)
+## Build System
+- Cargo.toml — `#![no_std]` crate usable in on-chain smart contracts or embedded node runtimes.
 
-## Roadmap
-
-| Phase | Aufgabe | Status |
-|-------|---------|--------|
-| Sprint 2.1 | Komponenten-Definition | ✅ ERLEDIGT |
-| Sprint 2.1 | Architektur-Baum | ✅ ERLEDIGT |
-| Sprint 2.1 | Stub-Dateien erstellen | 🔄 IN ARBEIT |
-| Sprint 2.1 | Implementierung | 📋 GEPLANT |
-| Sprint 2.1.1 | Tests | 📋 GEPLANT |
-| Sprint 2.1.2 | Dokumentation | 📋 GEPLANT |
-
----
-*Auto-generiert 2026-08-06 · Aurora (MasterBrain · Base44)*
+## Dependencies
+- byteorder — Fast endianness conversion for bytecode parsing without standard library.
+- digest — Cryptographic hash abstractions for state root calculation.
