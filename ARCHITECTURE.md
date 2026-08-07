@@ -1,30 +1,38 @@
 # ARCHITECTURE.md — atc-vm
 
-> Copyright © Michael Wroblewski / A-TownChain-Okosystems. All Rights Reserved.
+> Copyright © Michael Wroblewski / ShivaCore / A-TownChain-Okosystems. All Rights Reserved.
 
 ## File Tree
 ```tree
 atc-vm/
-├── Cargo.toml — ShivaVM core execution engine manifest (no_std)
-├── .gitignore — Git ignore rules
-└── src/
-    ├── lib.rs — ShivaVM entry point, execution environment, and state machine runner
-    ├── opcodes.rs — Instruction set architecture opcode definitions and instruction decoder
-    ├── stack.rs — High-performance operand stack and call stack implementation
-    ├── gas.rs — Deterministic opcode gas metering and resource limit enforcement
-    └── storage.rs — Persistent state trie storage interface and state rollback support
+├── requirements.txt — Python dependencies
+├── setup.py — pip installation configuration
+├── README.md — ATC Virtual Machine overview
+├── Cargo.toml — ShivaVM Rust workspace manifest (planned port, not yet implemented)
+└── vm/
+    ├── atcvm.py — Main VM execution engine
+    ├── opcodes.atc — Instruction set opcodes
+    ├── stack.atc — Operand stack implementation
+    ├── gas_meter.atc — Gas metering and resource limits
+    ├── interpreter.atc — Bytecode interpreter
+    └── bytecode_format.atc — Bytecode serialization format
 ```
 
 ## Module Descriptions
-- src/lib.rs — Main virtual machine execution engine, bytecode runner loop, and environment host bindings.
-- src/opcodes.rs — Complete specification and decoding matrix for ShivaVM instruction opcodes.
-- src/stack.rs — Efficient fixed-capacity stack operations with strict push/pop boundary checks.
-- src/gas.rs — Tracks instruction gas costs to guarantee deterministic execution and prevent infinite loops.
-- src/storage.rs — Key-value state storage interface backing virtual machine execution state.
+- `vm/atcvm.py` — Main Virtual Machine class with stack-based execution
+- `opcodes.atc` — ATC VM instruction set definitions
+- `stack.atc` — Operand and call stack management
+- `gas_meter.atc` — Deterministic gas metering for opcode execution
+- `interpreter.atc` — Bytecode interpreter loop
+- `bytecode_format.atc` — Binary bytecode serialization/deserialization
 
 ## Build System
-- Cargo.toml — `#![no_std]` crate usable in on-chain smart contracts or embedded node runtimes.
+- Python 3.11+ (current implementation)
+- Rust workspace (Cargo.toml created, src/ port planned but not yet implemented)
 
 ## Dependencies
-- byteorder — Fast endianness conversion for bytecode parsing without standard library.
-- digest — Cryptographic hash abstractions for state root calculation.
+- atc-blockchain (blockchain core for smart contract execution)
+- atc-contracts (smart contract templates)
+
+## Status (Active/Migrated/Legacy)
+Active (Python, Virtual Machine) — Rust port planned
