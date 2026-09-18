@@ -38,7 +38,7 @@ jobs:
           cat build/receipt.json
           grep -q '"status": "PASS"' build/receipt.json
       - name: Upload execution evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: atvm-native-exec-evidence
           path: build/receipt.json

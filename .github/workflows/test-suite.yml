@@ -56,7 +56,7 @@ jobs:
           sha256sum evidence-bundle/test_run.yaml > evidence-bundle/SHA256SUMS
       - name: Publish immutable evidence artifact (SCR-0086)
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: atc-vm-evidence-${{ github.sha }}
           path: evidence-bundle/
