@@ -15,6 +15,8 @@ pub enum VmError {
     StackUnderflow,
     InvalidJump(usize),
     DivisionByZero,
+    OutOfGas { required: u64, remaining: u64 },
+    InvalidProgram(&'static str),
     Context(ContextError),
 }
 
@@ -23,6 +25,17 @@ pub struct Vm {
     stack: Vec<u64>,
     caller: u64,
     storage: Vec<u64>,
+}
+
+
+fn gas_cost(op: &Op) -> u64 {
+    match op {
+        Op::Push(_) | Op::Dup | Op::Swap | Op::Caller => 1,
+        Op::Add | Op::Sub | Op::Mul | Op::Div | Op::Eq | Op::Lt => 2,
+        Op::Load(_) | Op::Store(_) => 3,
+        Op::Jump(_) | Op::JumpIfZero(_) | Op::JumpIfNotZero(_) => 2,
+        Op::Halt => 0,
+    }
 }
 
 impl Vm {
@@ -46,13 +59,107 @@ impl Vm {
         expected_protocol: &str,
         expected_vm: &str,
     ) -> Result<Vec<u64>, VmError> {
-        execution_gate(context, computed_genesis_id, expected_protocol, expected_vm)
-            .map_err(VmError::Context)?;
-        self.run()
+        // Keep the legacy entrypoint fail-closed: callers must explicitly provide
+        // the protocol gas budget through execute_state_transition_with_gas.
+        self.execute_state_transition_with_gas(
+            context,
+            computed_genesis_id,
+            expected_protocol,
+            expected_vm,
+            0,
+        )
     }
 
-    /// Raw bytecode interpreter. Callers performing chain state transitions MUST
-    /// use execute_state_transition instead of invoking this directly.
+    /// Canonical state-transition entrypoint with an explicit consensus gas budget.
+    /// The chain supplies the normative gas limit; the VM never invents one.
+    pub fn execute_state_transition_with_gas(
+        &mut self,
+        context: &ChainContext,
+        computed_genesis_id: &str,
+        expected_protocol: &str,
+        expected_vm: &str,
+        gas_limit: u64,
+    ) -> Result<Vec<u64>, VmError> {
+        execution_gate(context, computed_genesis_id, expected_protocol, expected_vm)
+            .map_err(VmError::Context)?;
+        self.verify()?;
+        self.run_with_gas(gas_limit)
+    }
+
+    /// Structural bytecode verification. Execution is rejected before any state
+    /// mutation when a control-flow target is outside the program.
+    pub fn verify(&self) -> Result<(), VmError> {
+        if self.program.is_empty() {
+            return Err(VmError::InvalidProgram("empty program"));
+        }
+        for op in &self.program {
+            match op {
+                Op::Jump(t) | Op::JumpIfNotZero(t) | Op::JumpIfZero(t)
+                    if *t >= self.program.len() =>
+                {
+                    return Err(VmError::InvalidProgram("jump target out of range"));
+                }
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+
+    pub fn run_with_gas(&mut self, mut gas_remaining: u64) -> Result<Vec<u64>, VmError> {
+        self.verify()?;
+        let mut pc = 0usize;
+        while pc < self.program.len() {
+            let cost = gas_cost(&self.program[pc]);
+            if gas_remaining < cost {
+                return Err(VmError::OutOfGas { required: cost, remaining: gas_remaining });
+            }
+            gas_remaining -= cost;
+            match self.program[pc].clone() {
+                Op::Push(v) => self.stack.push(v),
+                Op::Add => self.binop(|a, b| a.wrapping_add(b))?,
+                Op::Sub => self.binop(|a, b| a.wrapping_sub(b))?,
+                Op::Mul => self.binop(|a, b| a.wrapping_mul(b))?,
+                Op::Div => {
+                    let b = self.stack.pop().ok_or(VmError::StackUnderflow)?;
+                    let a = self.stack.pop().ok_or(VmError::StackUnderflow)?;
+                    self.stack.push(a.checked_div(b).ok_or(VmError::DivisionByZero)?);
+                }
+                Op::Eq => self.binop(|a, b| (a == b) as u64)?,
+                Op::Lt => self.binop(|a, b| (a < b) as u64)?,
+                Op::Dup => {
+                    let v = *self.stack.last().ok_or(VmError::StackUnderflow)?;
+                    self.stack.push(v);
+                }
+                Op::Swap => {
+                    let n = self.stack.len();
+                    if n < 2 { return Err(VmError::StackUnderflow); }
+                    self.stack.swap(n - 1, n - 2);
+                }
+                Op::Load(slot) => self.stack.push(self.storage.get(slot).copied().unwrap_or(0)),
+                Op::Store(slot) => {
+                    let v = self.stack.pop().ok_or(VmError::StackUnderflow)?;
+                    if slot >= self.storage.len() { self.storage.resize(slot + 1, 0); }
+                    self.storage[slot] = v;
+                }
+                Op::Caller => self.stack.push(self.caller),
+                Op::JumpIfZero(t) => {
+                    let v = self.stack.pop().ok_or(VmError::StackUnderflow)?;
+                    if v == 0 { pc = t; continue; }
+                }
+                Op::Jump(t) => { pc = t; continue; }
+                Op::JumpIfNotZero(t) => {
+                    let v = self.stack.pop().ok_or(VmError::StackUnderflow)?;
+                    if v != 0 { pc = t; continue; }
+                }
+                Op::Halt => break,
+            }
+            pc += 1;
+        }
+        Ok(std::mem::take(&mut self.stack))
+    }
+
+    /// Raw interpreter retained for local/unit use. Consensus state transitions
+    /// MUST use execute_state_transition_with_gas.
     pub fn run(&mut self) -> Result<Vec<u64>, VmError> {
         let mut pc = 0usize;
         while pc < self.program.len() {
@@ -127,11 +234,35 @@ mod tests {
     }
 
     #[test]
+    fn verifier_rejects_invalid_jump_before_state_mutation() {
+        let mut vm = Vm::with_context(vec![Op::Push(7), Op::Jump(99)], 1, vec![0]);
+        let result = vm.execute_state_transition_with_gas(&context(), &"a".repeat(64), "1.0.0", "1.0.0", 100);
+        assert_eq!(result, Err(VmError::InvalidProgram("jump target out of range")));
+        assert_eq!(vm.state(), &[0]);
+    }
+
+    #[test]
+    fn gas_exhaustion_is_fail_closed() {
+        let mut vm = Vm::with_context(vec![Op::Push(7), Op::Store(0), Op::Halt], 1, vec![0]);
+        let result = vm.execute_state_transition_with_gas(&context(), &"a".repeat(64), "1.0.0", "1.0.0", 2);
+        assert!(matches!(result, Err(VmError::OutOfGas { .. })));
+        assert_eq!(vm.state(), &[0]);
+    }
+
+    #[test]
+    fn explicit_gas_budget_executes_deterministically() {
+        let mut vm = Vm::with_context(vec![Op::Push(7), Op::Store(0), Op::Halt], 1, vec![0]);
+        let result = vm.execute_state_transition_with_gas(&context(), &"a".repeat(64), "1.0.0", "1.0.0", 4);
+        assert_eq!(result, Ok(vec![]));
+        assert_eq!(vm.state(), &[7]);
+    }
+
+    #[test]
     fn state_transition_requires_identity_gate() {
         let mut vm = Vm::with_context(vec![Op::Push(7), Op::Store(0), Op::Halt], 1, vec![]);
-        assert!(vm.execute_state_transition(&context(), &"b".repeat(64), "1.0.0", "1.0.0").is_err());
+        assert!(vm.execute_state_transition_with_gas(&context(), &"b".repeat(64), "1.0.0", "1.0.0", 10).is_err());
         assert!(vm.state().is_empty(), "invalid context darf keinen State mutieren");
-        assert!(vm.execute_state_transition(&context(), &"a".repeat(64), "1.0.0", "1.0.0").is_ok());
+        assert!(vm.execute_state_transition_with_gas(&context(), &"a".repeat(64), "1.0.0", "1.0.0", 10).is_ok());
         assert_eq!(vm.state(), &[7]);
     }
 
