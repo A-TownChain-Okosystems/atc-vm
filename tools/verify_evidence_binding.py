@@ -5,7 +5,7 @@ import os, re, subprocess, sys
 from pathlib import Path
 EVIDENCE = Path(".atc/evidence/evidence.yaml")
 def git_sha():
-    value = os.environ.get("GITHUB_SHA")
+    value = os.environ.get("EXPECTED_COMMIT") or os.environ.get("GITHUB_SHA")
     return value or subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
 def main():
     if not EVIDENCE.is_file():
