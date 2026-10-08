@@ -1,8 +1,8 @@
 # ATC ATVM (A-TownChain Virtual Machine)
 
-> **ATC COMPLIANCE: R1** — auditiert am 2026-09-10 (SCR-0075; R-Level aus `.atc/repository.yaml`).
+> **Historical governance snapshot:** R1 was recorded in an audit on 2026-09-10 (SCR-0075). This historical label does not establish current implementation verification or production readiness; consult `STATUS.md` and exact-SHA evidence.
 
-> Verifizierte Bytecode-Ausführung und deterministische Runtime-Engine für ATCLang-Verträge. ATVM ist die technische Grenze zwischen on-chain ATCLang und der Rust-basierten Chain-Infrastruktur.
+> Supporting repository for ATC-VM specifications, governance and development artifacts. The canonical VM implementation is `a-townchain/components/vm`; this repository must not be treated as a competing production VM.
 
 **Project:** atc-vm  
 **Organization:** A-TownChain-Okosystems  
@@ -14,7 +14,7 @@
 
 ## Overview
 
-`atc-vm` (A-TownChain Virtual Machine, ATVM) ist die kanonische Ausführungsumgebung für Smart Contracts im A-TownChain-Ökosystem. ATVM garantiert deterministische, verifizierte und gas-limitierte Bytecode-Ausführung mit strikter Sicherheits- und Speichersandbox.
+`atc-vm` ist ein unterstützendes Repository für Spezifikationen, Governance und Entwicklungsartefakte. Die kanonische Ausführungsimplementierung liegt in `a-townchain/components/vm`; diese Dokumentation behauptet keine unabhängige Produktions-VM und keine verifizierte Runtime allein aufgrund der Spezifikation.
 
 ATVM ist die **Boundary** zwischen:
 
@@ -24,7 +24,7 @@ ATVM ist die **Boundary** zwischen:
 
 ## Purpose
 
-ATVM provides the canonical execution environment and verifier engine within the A-TownChain ecosystem. It is responsible for:
+This repository documents and supports the ATC-VM workstream. The canonical implementation and normative execution behavior belong to `a-townchain/components/vm`. This repository must not independently define or ship a second production VM.
 
 - Bytecode-Verifikation — kein unverifizierter Bytecode wird ausgeführt.
 - Deterministische und gas-limitierte Vertragsausführung.
@@ -33,9 +33,9 @@ ATVM provides the canonical execution environment and verifier engine within the
 
 ## Scope
 
-- **Gilt für:** Kanonische Rust-Implementierung von ATVM, Bytecode-Verifier, Gas-Modell und Host-Syscall-Interface.
+- **Gilt für:** Unterstützende Spezifikationen, Governance und Entwicklungsmaterial; normative Runtime-Regeln folgen der kanonischen Implementierung und genehmigten Standards.
 - **Nicht-Gilt für:** Compiler-Frontend und Bytecode-Codegen (`atclang`) sowie Konsens-/Block-Orchestrierung (`a-townchain`).
-- **Kernel boundary:** Kernel- und TCB-Funktionen bleiben in `atc-shivacore`.
+- **Kernel boundary:** Kernel- und TCB-Funktionen bleiben in `globus-os/modules/atc-shivacore/kernel/`.
 
 ## Status
 
@@ -47,27 +47,16 @@ ATVM ist **nicht automatisch production-ready**, nur weil einzelne Tests oder In
 
 ```text
 ATCLang source
-     │
-     ▼
-Compiler / Codegen
-     │
-     ▼
-ATC Bytecode
-     │
-     ▼
-ATVM Verifier
-     │
-     ▼
-Deterministic Execution / Gas Engine
-     │
-     ▼
-Host Interface
-     │
-     ▼
-a-townchain State / Chain Infrastructure
-     │
-     ▼
-atc-shivacore kernel boundary
+     ↓
+Compiler / artifact validation
+     ↓
+ATCB bytecode
+     ↓
+Canonical VM: a-townchain/components/vm
+     ↓
+a-townchain state / chain infrastructure
+
+This repository: supporting specs, governance and development artifacts.
 ```
 
 ### Components
