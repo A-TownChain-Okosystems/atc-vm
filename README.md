@@ -2,7 +2,7 @@
 
 > **Historical governance snapshot:** R1 was recorded in an audit on 2026-09-10 (SCR-0075). This historical label does not establish current implementation verification or production readiness; consult `STATUS.md` and exact-SHA evidence.
 
-> Verifizierte Bytecode-Ausführung und deterministische Runtime-Engine für ATCLang-Verträge. ATVM ist die technische Grenze zwischen on-chain ATCLang und der Rust-basierten Chain-Infrastruktur.
+> Supporting repository for ATC-VM specifications, governance and development artifacts. The canonical VM implementation is `a-townchain/components/vm`; this repository must not be treated as a competing production VM.
 
 **Project:** atc-vm  
 **Organization:** A-TownChain-Okosystems  
@@ -24,7 +24,7 @@ ATVM ist die **Boundary** zwischen:
 
 ## Purpose
 
-ATVM provides the canonical execution environment and verifier engine within the A-TownChain ecosystem. It is responsible for:
+This repository documents and supports the ATC-VM workstream. The canonical implementation and normative execution behavior belong to `a-townchain/components/vm`. This repository must not independently define or ship a second production VM.
 
 - Bytecode-Verifikation — kein unverifizierter Bytecode wird ausgeführt.
 - Deterministische und gas-limitierte Vertragsausführung.
