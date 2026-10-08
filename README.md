@@ -14,7 +14,7 @@
 
 ## Overview
 
-`atc-vm` (A-TownChain Virtual Machine, ATVM) ist die kanonische Ausführungsumgebung für Smart Contracts im A-TownChain-Ökosystem. ATVM garantiert deterministische, verifizierte und gas-limitierte Bytecode-Ausführung mit strikter Sicherheits- und Speichersandbox.
+`atc-vm` ist ein unterstützendes Repository für Spezifikationen, Governance und Entwicklungsartefakte. Die kanonische Ausführungsimplementierung liegt in `a-townchain/components/vm`; diese Dokumentation behauptet keine unabhängige Produktions-VM und keine verifizierte Runtime allein aufgrund der Spezifikation.
 
 ATVM ist die **Boundary** zwischen:
 
@@ -33,9 +33,9 @@ This repository documents and supports the ATC-VM workstream. The canonical impl
 
 ## Scope
 
-- **Gilt für:** Kanonische Rust-Implementierung von ATVM, Bytecode-Verifier, Gas-Modell und Host-Syscall-Interface.
+- **Gilt für:** Unterstützende Spezifikationen, Governance und Entwicklungsmaterial; normative Runtime-Regeln folgen der kanonischen Implementierung und genehmigten Standards.
 - **Nicht-Gilt für:** Compiler-Frontend und Bytecode-Codegen (`atclang`) sowie Konsens-/Block-Orchestrierung (`a-townchain`).
-- **Kernel boundary:** Kernel- und TCB-Funktionen bleiben in `atc-shivacore`.
+- **Kernel boundary:** Kernel- und TCB-Funktionen bleiben in `globus-os/modules/atc-shivacore/kernel/`.
 
 ## Status
 
@@ -47,27 +47,16 @@ ATVM ist **nicht automatisch production-ready**, nur weil einzelne Tests oder In
 
 ```text
 ATCLang source
-     │
-     ▼
-Compiler / Codegen
-     │
-     ▼
-ATC Bytecode
-     │
-     ▼
-ATVM Verifier
-     │
-     ▼
-Deterministic Execution / Gas Engine
-     │
-     ▼
-Host Interface
-     │
-     ▼
-a-townchain State / Chain Infrastructure
-     │
-     ▼
-atc-shivacore kernel boundary
+     ↓
+Compiler / artifact validation
+     ↓
+ATCB bytecode
+     ↓
+Canonical VM: a-townchain/components/vm
+     ↓
+a-townchain state / chain infrastructure
+
+This repository: supporting specs, governance and development artifacts.
 ```
 
 ### Components
