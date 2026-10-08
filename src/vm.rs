@@ -428,7 +428,7 @@ mod tests {
     #[test]
     fn stack_growth_is_bounded() {
         let mut program = Vec::with_capacity(MAX_STACK_ITEMS + 1);
-        program.extend(std::iter::repeat(Op::Push(1)).take(MAX_STACK_ITEMS + 1));
+        program.extend(std::iter::repeat_n(Op::Push(1), MAX_STACK_ITEMS + 1));
         program.push(Op::Halt);
         let mut vm = Vm::new(program);
         let result = vm.execute_state_transition_with_gas(
@@ -444,8 +444,8 @@ mod tests {
     #[test]
     fn program_size_is_bounded() {
         let mut program = Vec::with_capacity(MAX_PROGRAM_OPS + 1);
-        program.extend(std::iter::repeat(Op::Halt).take(MAX_PROGRAM_OPS + 1));
-        let mut vm = Vm::new(program);
+        program.extend(std::iter::repeat_n(Op::Halt, MAX_PROGRAM_OPS + 1));
+        let vm = Vm::new(program);
         assert_eq!(
             vm.verify(),
             Err(VmError::ProgramTooLarge {
