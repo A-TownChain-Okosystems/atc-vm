@@ -1,6 +1,6 @@
 # ATC ATVM (A-TownChain Virtual Machine)
 
-> **ATC COMPLIANCE: R1** — auditiert am 2026-09-10 (SCR-0075; R-Level aus `.atc/repository.yaml`).
+> **Historical governance snapshot:** R1 was recorded in an audit on 2026-09-10 (SCR-0075). This historical label does not establish current implementation verification or production readiness; consult `STATUS.md` and exact-SHA evidence.
 
 > Verifizierte Bytecode-Ausführung und deterministische Runtime-Engine für ATCLang-Verträge. ATVM ist die technische Grenze zwischen on-chain ATCLang und der Rust-basierten Chain-Infrastruktur.
 
