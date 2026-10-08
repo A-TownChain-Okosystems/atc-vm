@@ -1,15 +1,14 @@
 # ATC ATVM (A-TownChain Virtual Machine)
 
 > **ATC COMPLIANCE: R1** — auditiert am 2026-09-10 (SCR-0075; R-Level aus `.atc/repository.yaml`).
-
 > Verifizierte Bytecode-Ausführung und deterministische Runtime-Engine für ATCLang-Verträge. ATVM ist die technische Grenze zwischen on-chain ATCLang und der Rust-basierten Chain-Infrastruktur.
 
-**Project:** atc-vm  
-**Organization:** A-TownChain-Okosystems  
-**Status:** `development`  
-**Version:** `0.1.0`  
-**License:** `Apache-2.0 — A-TownChain-Okosystems`  
-**Standard:** `ATC-STD-README-001`  
+**Project:** atc-vm
+**Organization:** A-TownChain-Okosystems
+**Status:** `development`
+**Version:** `0.1.0`
+**License:** `Apache-2.0 — A-TownChain-Okosystems`
+**Standard:** `ATC-STD-README-001`
 **Maintainer:** A-TownChain-Okosystems (ShivaCoreDev)
 
 ## Overview
@@ -46,6 +45,7 @@ ATVM ist **nicht automatisch production-ready**, nur weil einzelne Tests oder In
 ## Architecture
 
 ```text
+
 ATCLang source
      │
      ▼
@@ -68,7 +68,8 @@ a-townchain State / Chain Infrastructure
      │
      ▼
 atc-shivacore kernel boundary
-```
+
+```text
 
 ### Components
 
@@ -97,11 +98,13 @@ atc-shivacore kernel boundary
 ## Repository Structure
 
 ```text
+
 .
 ├── docs/                # Dokumentation, Architektur und Standards
 ├── src/                 # ATVM Quellcode
 └── tests/               # Unit-, Integrations- und Fuzzing-Tests
-```
+
+```text
 
 ## Requirements
 
@@ -112,17 +115,21 @@ atc-shivacore kernel boundary
 ## Installation
 
 ```bash
+
 git clone https://github.com/A-TownChain-Okosystems/atc-vm.git
 cd atc-vm
 cargo build
-```
+
+```text
 
 ## Usage
 
 ```bash
+
 cargo build
 cargo test
-```
+
+```text
 
 ## Development
 
@@ -131,8 +138,10 @@ Entwicklung erfolgt nach dem Rust-first Prinzip. Commits MÜSSEN Conventional Co
 ## Testing
 
 ```bash
+
 cargo test
-```
+
+```text
 
 Testergebnisse sind nur zusammen mit dem jeweiligen Evidence-Bundle ein Release-Nachweis.
 
@@ -181,7 +190,7 @@ Apache-2.0 — A-TownChain-Okosystems. Siehe `LICENSE`.
 
 ## Maintainers
 
-**Organization:** A-TownChain-Okosystems  
+**Organization:** A-TownChain-Okosystems
 **Maintainer:** ShivaCoreDev / Aurora Superagent
 
 ## Changelog
