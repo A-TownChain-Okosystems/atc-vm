@@ -1,5 +1,6 @@
 // Copyright (c) 2026 A-TownChain-Okosystems — Apache-2.0
 //! Stack-Maschine with stack/jump safety. State-transition entrypoint is gated by ATC-STD-600.
+#![allow(dead_code)]
 
 use crate::context::{execution_gate, ChainContext, ContextError};
 
