@@ -9,7 +9,7 @@ updated: 2026-09-07
 standard: ATC-STD-MD-001
 ---
 
-# Governance Rules — atc-vm
+## Governance Rules — atc-vm
 
 Dieses Repository wird gemäß dem A-TownChain Enterprise Governance Framework (ATC-STD-000 v1.2.0, ATC-ENT-001..015) geführt.
 
