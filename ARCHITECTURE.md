@@ -9,7 +9,7 @@ updated: 2026-09-07
 standard: ATC-STD-MD-001
 ---
 
-# Architecture Specification — atc-vm
+## Architecture Specification — atc-vm
 
 ## Übersicht
 
