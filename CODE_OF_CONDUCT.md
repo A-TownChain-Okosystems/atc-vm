@@ -9,7 +9,7 @@ updated: 2026-09-07
 standard: ATC-STD-MD-001
 ---
 
-# Code of Conduct — A-TownChain Ökosystem
+## Code of Conduct — A-TownChain Ökosystem
 
 ## Grundsätze
 
