@@ -69,7 +69,7 @@ a-townchain State / Chain Infrastructure
      ▼
 atc-shivacore kernel boundary
 
-```text
+```
 
 ### Components
 
@@ -104,7 +104,7 @@ atc-shivacore kernel boundary
 ├── src/                 # ATVM Quellcode
 └── tests/               # Unit-, Integrations- und Fuzzing-Tests
 
-```text
+```
 
 ## Requirements
 
@@ -120,7 +120,7 @@ git clone https://github.com/A-TownChain-Okosystems/atc-vm.git
 cd atc-vm
 cargo build
 
-```text
+```
 
 ## Usage
 
@@ -129,7 +129,7 @@ cargo build
 cargo build
 cargo test
 
-```text
+```
 
 ## Development
 
@@ -141,7 +141,7 @@ Entwicklung erfolgt nach dem Rust-first Prinzip. Commits MÜSSEN Conventional Co
 
 cargo test
 
-```text
+```
 
 Testergebnisse sind nur zusammen mit dem jeweiligen Evidence-Bundle ein Release-Nachweis.
 
