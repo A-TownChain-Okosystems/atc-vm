@@ -44,7 +44,7 @@ Task-ID: ATC-TASK-NNNN
 AI-Role: software-development
 Validation: PASS|FAIL|PENDING
 
-```text
+```
 
 Conventional-Commit-Typen: feat|fix|docs|test|refactor|security|build|ci|chore|spec.
 Ohne Trailer gilt ein Commit als menschlicher Commit (Agentenarbeit wird zurueckgewiesen).
